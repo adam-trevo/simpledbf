@@ -1,7 +1,9 @@
+import re
 import struct
 import datetime
 import os
 import codecs
+from typing import Union, BinaryIO
 
 # Check for optional dependencies.
 try:
@@ -537,14 +539,19 @@ class Dbf5(DbfBase):
     fmtsiz : int
         The size of each record in bytes.
     '''
-    def __init__(self, dbf, codec='utf-8'):
+    def __init__(self, dbf: Union[BinaryIO, str], codec='utf-8'):
         self._enc = codec
-        path, name = os.path.split(dbf)
+        if type(dbf) == str:
+            name = os.path.basename(dbf)
+            self.f = open(dbf, 'rb')
+        else:
+            name = re.search(r'([^/]+)$', dbf.name)[1]
+            self.f = dbf
+
         self.dbf = name
         # Escape quotes, set by indiviual runners
         self._esc = None
         # Reading as binary so bytes will always be returned
-        self.f = open(dbf, 'rb')
 
         self.numrec, self.lenheader = struct.unpack('<xxxxLH22x', 
                 self.f.read(32))    
