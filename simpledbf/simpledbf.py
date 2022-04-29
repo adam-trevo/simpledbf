@@ -8,17 +8,17 @@ from typing import Union, BinaryIO
 # Check for optional dependencies.
 try:
     import pandas as pd
-except:
-    print("Pandas is not installed. No support for DataFrames, HDF, or SQL.")
+except ModuleNotFoundError:
+    pass
 else:
     try:
         import tables as tb
-    except:
-        print("PyTables is not installed. No support for HDF output.")
+    except ModuleNotFoundError:
+        pass
     try:
         import sqlalchemy as sql
-    except:
-        print("SQLalchemy is not installed. No support for SQL output.")
+    except ModuleNotFoundError:
+        pass
 
 sqltypes = {
         'sqlite': {'str':'TEXT', 'float':'REAL', 'int': 'INTEGER', 
