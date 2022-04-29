@@ -545,7 +545,18 @@ class Dbf5(DbfBase):
             name = os.path.basename(dbf)
             self.f = open(dbf, 'rb')
         else:
-            name = re.search(r'([^/]+)$', dbf.name)[1]
+            fields = dir(dbf)
+
+            if 'full_name' in fields:
+                field = 'full_name'
+            elif 'path' in fields:
+                field = 'path'
+            elif 'name' in fields:
+                field = 'name'
+            else:
+                raise NotImplementedError(f'Not implemented reading from {dbf}.')
+
+            name = re.search(r'([^/]+)$', getattr(dbf, field))[1]
             self.f = dbf
 
         self.dbf = name
